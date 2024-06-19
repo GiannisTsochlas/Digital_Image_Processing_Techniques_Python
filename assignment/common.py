@@ -9,16 +9,19 @@ def read_img(path, greyscale=True):
         img = img.convert('L')
     else:
         img = img.convert('RGB')
-    return np.array(img).astype(np.float)
+    return np.array(img).astype(np.float16)
 
 
 def save_img(img, path):
-    img = img - img.min()
-    img = img / img.max()
-    img = (img * 255).astype(np.uint8)
-    img = Image.fromarray(img)
-    img.save(path)
-    print(path, "is saved!")
+    if img is not None:
+        img = img - img.min()
+        img = img / img.max()
+        img = (img * 255).astype(np.uint8)
+        img = Image.fromarray(img)
+        img.save(path)
+        print(path, "is saved!")
+    else:
+        print("Image is None, cannot save.")
 
 
 def find_maxima(scale_space, k_xy=5, k_s=1):

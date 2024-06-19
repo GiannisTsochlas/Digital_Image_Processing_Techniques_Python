@@ -27,7 +27,11 @@ def image_patches(image, patch_size=(16, 16)):
             patch = image[i:i + patch_height, j:j + patch_width]# TODO: Use slicing to complete the function
             # patch of the correct size
             if patch.shape == (patch_height, patch_width):
-                output.append(patch)
+                # Normalize the patch
+                patch_mean = np.mean(patch)
+                patch_std = np.std(patch)
+                normalized_patch = (patch - patch_mean) / patch_std
+                output.append(normalized_patch)
     return output
 
 
