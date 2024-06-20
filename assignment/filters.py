@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from common import read_img, save_img
+import matplotlib.pyplot as plt
 
 
 def image_patches(image, patch_size=(16, 16)):
@@ -24,7 +25,7 @@ def image_patches(image, patch_size=(16, 16)):
     # Iterate image to extract patches
     for i in range(0, img_height, patch_height):
         for j in range(0, img_width, patch_width):
-            patch = image[i:i + patch_height, j:j + patch_width]# TODO: Use slicing to complete the function
+            patch = image[i:i + patch_height, j:j + patch_width]  # TODO: Use slicing to complete the function
             # patch of the correct size
             if patch.shape == (patch_height, patch_width):
                 # Normalize the patch
@@ -46,8 +47,47 @@ def convolve(image, kernel):
            kernel: h x w
     Output- convolve: H x W
     """
-    output = None
+
+    # Check if kernel is 1D
+    if kernel.ndim == 1:
+        kernel = kernel[:, np.newaxis]
+
+    # revert kenel
+    kernel = np.flip(kernel)
+
+    # Get image dimensions
+    img_height, img_width = image.shape
+    kernel_height, kernel_width = kernel.shape
+
+    # Pad the image with zeros
+    pad_height = kernel_height // 2
+    pad_width = kernel_width // 2
+    padded_image = np.pad(image, ((pad_height, pad_height), (pad_width, pad_width)), mode='constant', constant_values=0)
+
+    # Prepare the output array
+    output = np.zeros_like(image)
+
+    # Perform convolution
+    for i in range(img_height):
+        for j in range(img_width):
+            output[i, j] = np.sum(padded_image[i:i + kernel_height, j:j + kernel_width] * kernel)
+
     return output
+
+
+# Set the Gaussian filter
+def gaussian_kernel(size, sigma=1):
+    """Generates a 2D Gaussian kernel."""
+    kernel_1D = np.linspace(-(size // 2), size // 2, size)
+
+    for i in range(size):
+        kernel_1D[i] = np.exp(-(kernel_1D[i] ** 2) / (2 * sigma ** 2))
+
+    kernel_2D = np.outer(kernel_1D.T, kernel_1D.T)
+
+    kernel_2D *= 1.0 / kernel_2D.max()
+
+    return kernel_2D
 
 
 def edge_detection(image):
@@ -85,8 +125,6 @@ def sobel_operator(image):
     return Gx, Gy, grad_magnitude
 
 
-
-
 def main():
     # The main function
     img = read_img('./grace_hopper.png')
@@ -117,10 +155,22 @@ def main():
     # (c)
     # Calculate the Gaussian kernel described in the question 2.(c).
     # There is tolerance for the kernel.
-    kernel_gaussian = None
 
+    kernel_size = 3
+    sigma = 0.572
+    kernel_gaussian = gaussian_kernel(kernel_size, sigma)
     filtered_gaussian = convolve(img, kernel_gaussian)
     save_img(filtered_gaussian, "./gaussian_filter/q2_gaussian.png")
+
+    # plot the original and filtered images
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1)
+    plt.title("Αρχική Εικόνα")
+    plt.imshow(img, cmap='gray')
+    plt.subplot(1, 2, 2)
+    plt.title("Φιλτραρισμένη Εικόνα")
+    plt.imshow(filtered_gaussian, cmap='gray')
+    plt.show()
 
     # (d), (e): No code
 
