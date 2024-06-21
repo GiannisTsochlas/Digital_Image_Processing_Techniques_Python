@@ -4,6 +4,7 @@ import numpy as np
 import scipy.ndimage
 
 from common import read_img, save_img
+from PIL import Image
 import matplotlib.pyplot as plt
 
 
@@ -90,17 +91,18 @@ def gaussian_kernel(size, sigma=1):
 
     return kernel_2D
 
+
 # Μη κανονικοποιημένο Gaussian φίλτρο
 def unnormalized_gaussian_kernel(size, sigma):
     """Generates an unnormalized 2D Gaussian kernel."""
     kernel_1D = np.linspace(-(size // 2), size // 2, size)
     for i in range(size):
-        kernel_1D[i] = np.exp(-(kernel_1D[i]**2) / (2 * sigma**2))
+        kernel_1D[i] = np.exp(-(kernel_1D[i] ** 2) / (2 * sigma ** 2))
     kernel_2D = np.outer(kernel_1D, kernel_1D)
     return kernel_2D
 
 
-def edge_detection(image):
+def edge_detection(image_path):
     """
     --- Zitima 2.f ---
     Return Ix, Iy and the gradient magnitude of the input image
@@ -108,15 +110,18 @@ def edge_detection(image):
     Input- image: H x W
     Output- Ix, Iy, grad_magnitude: H x W
     """
+    image = Image.open(image_path).convert('L')
+    image = np.array(image)
+
     # TODO: Fix kx, ky
-    kx = None  # 1 x 3
-    ky = None  # 3 x 1
+    kx = np.array([-1, 0, 1]).reshape(1, 3)  # 1x3
+    ky = np.array([-1, 0, 1]).reshape(3, 1)  # 3x1
 
     Ix = convolve(image, kx)
     Iy = convolve(image, ky)
 
     # TODO: Use Ix, Iy to calculate grad_magnitude
-    grad_magnitude = None
+    grad_magnitude = np.sqrt(Ix ** 2 + Iy ** 2)
 
     return Ix, Iy, grad_magnitude
 
@@ -225,7 +230,6 @@ def main():
     plt.imshow(filtered_image_unnormalized, cmap='gray', vmin=0, vmax=255)
     plt.tight_layout()
     plt.show()
-
 
     # (f): Complete edge_detection()
 
