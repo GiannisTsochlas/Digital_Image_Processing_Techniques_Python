@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import scipy.ndimage
 
 from common import read_img, save_img
 import matplotlib.pyplot as plt
@@ -89,6 +90,15 @@ def gaussian_kernel(size, sigma=1):
 
     return kernel_2D
 
+# Μη κανονικοποιημένο Gaussian φίλτρο
+def unnormalized_gaussian_kernel(size, sigma):
+    """Generates an unnormalized 2D Gaussian kernel."""
+    kernel_1D = np.linspace(-(size // 2), size // 2, size)
+    for i in range(size):
+        kernel_1D[i] = np.exp(-(kernel_1D[i]**2) / (2 * sigma**2))
+    kernel_2D = np.outer(kernel_1D, kernel_1D)
+    return kernel_2D
+
 
 def edge_detection(image):
     """
@@ -159,6 +169,7 @@ def main():
     kernel_size = 3
     sigma = 0.572
     kernel_gaussian = gaussian_kernel(kernel_size, sigma)
+    #test the convolve function with filtered_gaussian = scipy.ndimage.convolve(img, kernel_gaussian)
     filtered_gaussian = convolve(img, kernel_gaussian)
     save_img(filtered_gaussian, "./gaussian_filter/q2_gaussian.png")
 
@@ -172,7 +183,49 @@ def main():
     plt.imshow(filtered_gaussian, cmap='gray')
     plt.show()
 
-    # (d), (e): No code
+    # (d)
+
+    # Υπολογισμός των εντάσεων της φιλτραρισμένης εικόνας
+    min_intensity = filtered_gaussian.min()
+    max_intensity = filtered_gaussian.max()
+    intensity_range = max_intensity - min_intensity
+
+    print(f"Min Intensity: {min_intensity}")
+    print(f"Max Intensity: {max_intensity}")
+    print(f"Intensity Range: {intensity_range}")
+
+    unnormalized_gaussian_filter = unnormalized_gaussian_kernel(3, 2)
+
+    # Υπολογισμός αθροίσματος των συντελεστών του μη κανονικοποιημένου φίλτρου
+    sum_of_weights = unnormalized_gaussian_filter.sum()
+    print(f"Sum of Gaussian filter weights (Unnormalized): {sum_of_weights}")
+
+    # Εφαρμογή του μη κανονικοποιημένου φίλτρου
+    filtered_image_unnormalized = convolve(img, unnormalized_gaussian_filter)
+
+    # Υπολογισμός των εντάσεων της φιλτραρισμένης εικόνας
+    min_intensity_unnormalized = filtered_image_unnormalized.min()
+    max_intensity_unnormalized = filtered_image_unnormalized.max()
+    intensity_range_unnormalized = max_intensity_unnormalized - min_intensity_unnormalized
+
+    print(f"Min Intensity (Unnormalized): {min_intensity_unnormalized}")
+    print(f"Max Intensity (Unnormalized): {max_intensity_unnormalized}")
+    print(f"Intensity Range (Unnormalized): {intensity_range_unnormalized}")
+
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(1, 3, 1)
+    plt.title("Αρχική Εικόνα")
+    plt.imshow(img, cmap='gray', vmin=0, vmax=255)
+    plt.subplot(1, 3, 2)
+    plt.title("Κανονικοποιημένο Φίλτρο")
+    plt.imshow(filtered_gaussian, cmap='gray', vmin=0, vmax=255)
+    plt.subplot(1, 3, 3)
+    plt.title("Μη Κανονικοποιημένο Φίλτρο")
+    plt.imshow(filtered_image_unnormalized, cmap='gray', vmin=0, vmax=255)
+    plt.tight_layout()
+    plt.show()
+
 
     # (f): Complete edge_detection()
 
