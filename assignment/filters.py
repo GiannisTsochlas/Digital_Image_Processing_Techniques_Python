@@ -102,7 +102,7 @@ def unnormalized_gaussian_kernel(size, sigma):
     return kernel_2D
 
 
-def edge_detection(image_path):
+def edge_detection(image):
     """
     --- Zitima 2.f ---
     Return Ix, Iy and the gradient magnitude of the input image
@@ -110,9 +110,6 @@ def edge_detection(image_path):
     Input- image: H x W
     Output- Ix, Iy, grad_magnitude: H x W
     """
-    image = Image.open(image_path).convert('L')
-    image = np.array(image)
-
     # TODO: Fix kx, ky
     kx = np.array([-1, 0, 1]).reshape(1, 3)  # 1x3
     ky = np.array([-1, 0, 1]).reshape(3, 1)  # 3x1
@@ -135,7 +132,15 @@ def sobel_operator(image):
     Output- Gx, Gy, grad_magnitude: H x W
     """
     # TODO: Use convolve() to complete the function
-    Gx, Gy, grad_magnitude = None, None, None
+    # Ορισμός των πυρήνων Sobel
+    S_x = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
+    S_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+
+    # Υπολογισμός των παραγώγων της εικόνας
+    Gx = convolve(image, S_x)
+    Gy = convolve(image, S_y)
+
+    grad_magnitude = np.sqrt(I_x**2 + I_y**2)
 
     return Gx, Gy, grad_magnitude
 
@@ -238,8 +243,25 @@ def main():
     # for the orignal and gaussian filtered images.
     _, _, edge_detect = edge_detection(img)
     save_img(edge_detect, "./gaussian_filter/q3_edge.png")
+
     _, _, edge_with_gaussian = edge_detection(filtered_gaussian)
     save_img(edge_with_gaussian, "./gaussian_filter/q3_edge_gaussian.png")
+
+    # Plot the gradient magnitude of the original and filtered images
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Gradient Magnitude - Original Image")
+    plt.imshow(edge_detect, cmap='gray')
+    plt.colorbar()
+
+    plt.subplot(1, 2, 2)
+    plt.title("Gradient Magnitude - Gaussian Filtered Image")
+    plt.imshow(edge_with_gaussian, cmap='gray')
+    plt.colorbar()
+
+    plt.tight_layout()
+    plt.show()
 
     print("Gaussian Filter is done. ")
 
