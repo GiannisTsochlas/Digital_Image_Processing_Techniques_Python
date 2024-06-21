@@ -140,7 +140,7 @@ def sobel_operator(image):
     Gx = convolve(image, S_x)
     Gy = convolve(image, S_y)
 
-    grad_magnitude = np.sqrt(I_x**2 + I_y**2)
+    grad_magnitude = np.sqrt(Gx**2 + Gy**2)
 
     return Gx, Gy, grad_magnitude
 
@@ -279,6 +279,26 @@ def main():
     save_img(Gy, "./sobel_operator/q2_Gy.png")
     save_img(edge_sobel, "./sobel_operator/q2_edge_sobel.png")
 
+    plt.figure(figsize=(18, 6))
+
+    plt.subplot(1, 3, 1)
+    plt.title("(Gradient in x direction)")
+    plt.imshow(Gx, cmap='gray')
+    plt.colorbar()
+
+    plt.subplot(1, 3, 2)
+    plt.title("(Gradient in y direction)")
+    plt.imshow(Gy, cmap='gray')
+    plt.colorbar()
+
+    plt.subplot(1, 3, 3)
+    plt.title("Gradient Magnitude - Sobel Operator")
+    plt.imshow(edge_sobel, cmap='gray')
+    plt.colorbar()
+
+    plt.tight_layout()
+    plt.show()
+
     print("Sobel Operator is done. ")
 
     # -- TODO Zitima 4: LoG Filter --
@@ -296,11 +316,32 @@ def main():
                             [3, 3, 5, 3, 0, 3, 5, 3, 3],
                             [0, 2, 3, 5, 5, 5, 3, 2, 0],
                             [0, 0, 3, 2, 2, 2, 3, 0, 0]])
-    filtered_LoG1 = None
-    filtered_LoG2 = None
+    filtered_LoG1 = convolve(img, kernel_LoG1)
+    filtered_LoG2 = convolve(img, kernel_LoG2)
+
     # Use convolve() to convolve img with kernel_LOG1 and kernel_LOG2
     save_img(filtered_LoG1, "./log_filter/q1_LoG1.png")
     save_img(filtered_LoG2, "./log_filter/q1_LoG2.png")
+
+    plt.figure(figsize=(18, 6))
+
+    plt.subplot(1, 3, 1)
+    plt.title("Original Image")
+    plt.imshow(img, cmap='gray')
+    plt.colorbar()
+
+    plt.subplot(1, 3, 2)
+    plt.title("LoG Filter 1 Output")
+    plt.imshow(filtered_LoG1, cmap='gray')
+    plt.colorbar()
+
+    plt.subplot(1, 3, 3)
+    plt.title("LoG Filter 2 Output")
+    plt.imshow(filtered_LoG2, cmap='gray')
+    plt.colorbar()
+
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == "__main__":
