@@ -1,4 +1,3 @@
-
 # README
 
 ## Description
@@ -21,16 +20,14 @@ This project is part of the Digital Image Processing course (MΥΕ037) at the Un
 ![Original Image](assignment/grace_hopper.png)
 
 ### Gaussian Filtered Image
-
-![Gaussian Filtered](assignment/gaussian_filter/q2_gaussian.png)
+![Gaussian Filtered Image](assignment/gaussian_filter/q2_gaussian.png)
 
 ### Edge Detection with Sobel Operator
-
-![Sobel Edge Detection](assignment/sobel_operator/q2_edge_sobel.png)
+![Sobel Operator Results](assignment/sobel_operator/q2_edge_sobel.png)
 
 ### Laplacian of Gaussian (LoG) Filter Results
-![LoG Filter 1](assignment/log_filter/q1_LoG1.png)
-![LoG Filter 2](assignment/log_filter/q1_LoG2.png)
+![LoG Filter Results](assignment/log_filter/q1_LoG1.png)
+![LoG Filter Results (Zoomed)](assignment/log_filter/q1_LoG2.png)
 
 ## Setup and Usage
 1. **Environment Setup**:
