@@ -119,7 +119,12 @@ def edge_detection(image):
     Iy = convolve(image, ky)
 
     # TODO: Use Ix, Iy to calculate grad_magnitude
-    grad_magnitude = np.sqrt(Ix ** 2 + Iy ** 2)
+
+    #to prvent RuntimeWarning: overflow encountered
+    with np.errstate(over='ignore', invalid='ignore'):
+        grad_magnitude = np.sqrt(Ix ** 2 + Iy ** 2)
+        grad_magnitude = np.nan_to_num(grad_magnitude, nan=0.0, posinf=255, neginf=0)
+    # = np.sqrt(Ix ** 2 + Iy ** 2)
 
     return Ix, Iy, grad_magnitude
 
@@ -141,7 +146,11 @@ def sobel_operator(image):
     Gx = convolve(image, S_x)
     Gy = convolve(image, S_y)
 
-    grad_magnitude = np.sqrt(Gx**2 + Gy**2)
+    #to prvent RuntimeWarning: overflow encountered
+    with np.errstate(over='ignore', invalid='ignore'):
+        grad_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+        grad_magnitude = np.nan_to_num(grad_magnitude, nan=0.0, posinf=255, neginf=0)
+    #grad_magnitude = np.sqrt(Gx**2 + Gy**2)
 
     return Gx, Gy, grad_magnitude
 
